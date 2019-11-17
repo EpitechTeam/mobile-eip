@@ -3,9 +3,6 @@ import {createStackNavigator, createAppContainer} from 'react-navigation';
 import Login from './Login';
 
 import MainTabNavigator from './MainTabNavigator';
-import SceanceScreen from "../screens/SceanceScreen";
-import MessageScreen from "../screens/MessageScreen";
-import ExercicesScreen from "../screens/ExercicesScreen";
 import ForgotPassword from "../screens/ForgotPassword";
 import ProfileScreen from "../screens/ProfileScreen";
 import Icon from 'react-native-vector-icons/Feather';
@@ -37,7 +34,7 @@ const Stack = createStackNavigator({
     },
 });
 
-const App = createStackNavigator({
+const Ap = createStackNavigator({
     Login: Login,
     MDP: ForgotPassword,
     Register: RegisterScreen,
@@ -48,4 +45,4 @@ const App = createStackNavigator({
     },
 })
 
-export default createAppContainer(App);
+export default createAppContainer(Ap);

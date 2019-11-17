@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "EIP-Mobile",
-    "slug": "EIP-Mobile",
+    "name": "Mobile-Eip",
+    "slug": "Mobile-Eip",
     "privacy": "public",
     "sdkVersion": "35.0.0",
     "platforms": [
@@ -24,11 +24,7 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.kinePlus.kineMobile"
-    },
-    "android": {
-      "package": "com.kinePlus.kineMobile"
+      "supportsTablet": true
     }
   }
 }

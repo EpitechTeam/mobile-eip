@@ -11,7 +11,6 @@ import DashboardScreen from '../screens/DashboardScreen';
 import ExercicesScreen from '../screens/ExercicesScreen';
 import Map from '../components/Map';
 
-import MessageScreen from '../screens/MessageScreen';
 
 const DashboardStack = createStackNavigator({
     Dash: DashboardScreen,
