@@ -44,6 +44,7 @@ export default class DashboardScreen extends React.Component {
                     ]}
                     renderItem={({item}) => (
                         <TouchableOpacity onPress={() => {
+                            this.props.navigation.navigate('Details')
                         }}>
                             <Card
                                 title='Jolie petite Chambre près du Canal St Martin'

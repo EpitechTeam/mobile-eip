@@ -10,10 +10,12 @@ import ProfileScreen from '../screens/ProfileScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import ExercicesScreen from '../screens/ExercicesScreen';
 import Map from '../components/Map';
+import MissionDetailsScreen from "../screens/MissionDetailsScreen";
 
 
 const DashboardStack = createStackNavigator({
     Dash: DashboardScreen,
+    Details:MissionDetailsScreen,
     Map : Map
 }, {
     navigationOptions: {
