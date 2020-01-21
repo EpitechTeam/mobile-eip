@@ -1,36 +1,28 @@
 import React from 'react';
 import {createStackNavigator, createAppContainer} from 'react-navigation';
-import Login from './Login';
+import Login from '../screens/sign-in/Login.tsx';
 
 import MainTabNavigator from './MainTabNavigator';
-import ForgotPassword from "../screens/ForgotPassword";
-import ProfileScreen from "../screens/ProfileScreen";
+import ForgotPassword from "../screens/forgot-password/ForgotPassword.tsx";
+import ProfileScreen from "../screens/profil/ProfileScreen";
 import Icon from 'react-native-vector-icons/Feather';
-import RegisterScreen from "../screens/RegisterScreen";
+import RegisterScreen from "../screens/sign-up/RegisterScreen.tsx";
+import ProfileSettings from "../screens/profile-settings/ProfileSettings";
 
 
 const Stack = createStackNavigator({
     Main: {
         screen: MainTabNavigator,
-        navigationOptions: ({navigation}) => ({
-            headerLeft: () => (
-                <Icon name={'user'} size={40} onPress={() => {
-                    navigation.navigate('Profil')
-                }}/>
-            ),
-            headerLeftContainerStyle: {
-                paddingLeft: 10,
-            },
-            headerStyle: {
-                shadowColor: 'transparent',
-                elevation: 0
-            },
-        })
+        headerMode: "none",
+        navigationOptions: {
+            header: null,
+        },
     },
-    Profil: ProfileScreen
-}, {
+    Profil: ProfileScreen,
+    ProfileSettings: ProfileSettings
+}, { headerMode: "none",
     navigationOptions: {
-        header: null
+        header: null,
     },
 });
 
@@ -40,6 +32,7 @@ const Ap = createStackNavigator({
     Register: RegisterScreen,
     Dash: Stack,
 }, {
+    headerMode: "none",
     navigationOptions: {
         header: null,
     },

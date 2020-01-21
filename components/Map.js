@@ -1,6 +1,6 @@
 import React from 'react';
 import {Component} from "react";
-import {Alert, Button, Platform, Text, Image} from 'react-native';
+import {Alert, Button, Platform, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -9,6 +9,9 @@ import {Callout} from 'react-native-maps';
 import {Marker} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import {View} from "react-native";
+import {Card, Layout} from "@ui-kitten/components";
+import {ClockIcon} from "../screens/dash/extra/icons";
+import {ImageOverlay} from "../screens/dash/extra/image-overlay.component";
 
 
 export default class Map extends Component {
@@ -42,7 +45,7 @@ export default class Map extends Component {
         errorMessage: null,
     };
 
-    focusOff={
+    focusOff = {
         x: 0,
         y: 300,
     }
@@ -75,7 +78,6 @@ export default class Map extends Component {
     };
 
 
-
     render() {
         return (
             <MapView
@@ -87,35 +89,59 @@ export default class Map extends Component {
             >
                 {this.state.markers.map(marker => (
                     <Marker
-                        calloutAnchor={{x:0.5,y:2}}
+                        calloutAnchor={{x: 0.5, y: 2}}
                         coordinate={marker.latlng}
                         title={marker.title}
                         description={marker.description}
                     >
-                        <Callout style={{height: 400, width: 400 , backgroundColor:'#58A4B0'}} tooltip={true} onPress={() => {
-                            Alert.alert("OUI")
-                        }}>
-                            <Text style={{alignSelf: 'center', fontSize:17, color:'white'}}>Jolie petite Chambre près du Canal St Martin</Text>
-                            <Text> </Text>
-                            <Text style={{alignSelf: 'center',color:'white'}}>
-                                <Icon name="location" color="#4F8EF7"/> 0.9 Km
-                            </Text>
-                            <View style={{flex: 1, }}>
-                                <Text style={{flex: 1, marginTop: -60,}}>
-                                    <Image
-                                        style={{
-                                            width: 400,
-                                            height: 200,
-                                            resizeMode: 'contain'
-                                        }}
-                                        source={{uri: 'https://www.stockholmpass.com/images_lib/912099625_royalpalace2019_1.jpg'}}/>
-                                </Text>
-                            </View>
-                            <Text style={{color:'white'}}>
-                                Chambre dans boutique-hôtel: 2 voyageurs, 1 chambre , 1 lit , 1 salle de bain
-                            </Text>
-                            <Text> </Text>
-                            <Text style={{color:'white'}}>Rémunération : 40€</Text>
+                        <Callout style={{}} tooltip={true}
+                                 onPress={() => {
+                                     Alert.alert("OUI")
+                                 }}>
+                            <Card
+                                style={styles.item}
+                                header={() => {
+                                    return (
+                                        <View style={styles.itemHeaderDetails}>
+                                            <Text
+                                                category='h4'
+                                                status='control'>
+                                                {`Test visuel`}{"\n"}{`Mission d'une durée de 10 j`}
+                                            </Text>
+                                            <Text style={{marginTop: -70,}}>
+                                                <Image
+                                                    style={styles.itemHeader}
+                                                    source={{uri: "https://edito.seloger.com/sites/default/files/styles/manual_crop_1440x480/public/page_garde_guide/image/location-appartement-guide-seloger.jpg"}}/>
+                                            </Text>
+                                        </View>)
+                                }}
+                                footer={() => {
+                                    return (
+                                        <View style={styles.itemFooter}>
+                                            <View style={styles.itemReactionsContainer}>
+                                                <Text
+                                                    style={{}}>
+                                                    Rémunération
+                                                </Text>
+                                            </View>
+                                            <Text
+                                                style={{}}>
+                                                {`200 €`}
+                                            </Text>
+                                        </View>
+                                    )
+                                }}>
+                                <Layout
+                                    style={styles.itemStyxContainer}
+                                    level='2'>
+                                    <Text
+                                        style={styles.itemStyxText}
+                                        category='h6'>
+                                        {`Nimes`}
+                                    </Text>
+
+                                </Layout>
+                            </Card>
                         </Callout>
                     </Marker>
                 ))}
@@ -123,3 +149,74 @@ export default class Map extends Component {
         )
     }
 }
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    searchInput: {
+        marginTop: 16,
+        marginHorizontal: 16,
+    },
+    list: {
+        flex: 1,
+    },
+    detailsList: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginHorizontal: -4,
+        marginVertical: 8,
+    },
+    detailItem: {
+        marginTop: 5,
+        marginHorizontal: 4,
+        borderRadius: 16,
+    },
+    listContent: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+    },
+    item: {
+        marginVertical: 8,
+    },
+    itemHeader: {
+        width: 200,
+        height: 200,
+    },
+    itemHeaderDetails: {
+        alignItems: 'center',
+    },
+    itemStyxContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderRadius: 4,
+        marginHorizontal: -8,
+    },
+    itemStyxText: {
+        marginHorizontal: 16,
+        marginVertical: 14,
+    },
+    itemStyxButton: {
+        paddingHorizontal: 0,
+        paddingVertical: 0,
+        borderRadius: 24,
+    },
+    itemDescription: {
+        marginHorizontal: -8,
+        marginTop: 16,
+    },
+    itemFooter: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    itemReactionsContainer: {
+        flexDirection: 'row',
+    },
+    itemAddButton: {
+        flexDirection: 'row-reverse',
+        paddingHorizontal: 0,
+    },
+    iconButton: {
+        paddingHorizontal: 0,
+    },
+});

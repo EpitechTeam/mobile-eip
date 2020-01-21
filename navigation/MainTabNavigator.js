@@ -6,21 +6,22 @@ import McIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import FaIcon from "react-native-vector-icons/FontAwesome";
 
 import TabBarIcon from '../components/TabBarIcon';
-import ProfileScreen from '../screens/ProfileScreen';
-import DashboardScreen from '../screens/DashboardScreen';
+import ProfileScreen from '../screens/profil/ProfileScreen';
+import DashboardScreen from '../screens/dash/DashboardScreen';
 import ExercicesScreen from '../screens/ExercicesScreen';
 import Map from '../components/Map';
-import MissionDetailsScreen from "../screens/MissionDetailsScreen";
+import MissionDetailsScreen from "../screens/details/MissionDetailsScreen";
 
 
 const DashboardStack = createStackNavigator({
     Dash: DashboardScreen,
-    Details:MissionDetailsScreen,
-    Map : Map
+    Details: MissionDetailsScreen,
+    Map: Map
 }, {
+    headerMode: "none",
     navigationOptions: {
-
-    }
+        header: null,
+    },
 });
 
 DashboardStack.navigationOptions = {
@@ -36,7 +37,12 @@ DashboardStack.navigationOptions = {
 
 const ExercicesStack = createStackNavigator({
     Exercices: ExercicesScreen,
-}, {headerMode: 'screen',});
+}, {
+    headerMode: "none",
+    navigationOptions: {
+        header: null,
+    },
+});
 
 ExercicesStack.navigationOptions = {
     tabBarLabel: 'Exercises',
