@@ -1,11 +1,20 @@
 import React from 'react';
-import {Alert, ListRenderItemInfo, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {
+    Alert,
+    ListRenderItemInfo,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from 'react-native';
 import {Button, Card, Input, Layout, List, Text, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
 import {ImageOverlay} from './extra/image-overlay.component';
 import {ArrowIosBackIcon, ClockIcon, CloseIcon, HeartIcon, PlusIcon, SearchIcon, ShareIcon} from './extra/icons';
 import {useSafeArea} from './extra/3rd-party';
 import {Training} from './extra/data';
 import {Product} from "../details/extra/data";
+import {NavigationEvents} from "react-navigation";
 
 export default ({navigation}): React.ReactElement => {
 
@@ -15,88 +24,17 @@ export default ({navigation}): React.ReactElement => {
         setQuery('');
     };
     const onEndInput = (): void => {
-        fetch(global.BaseUrl + "/mission", {
+        fetch(global.BaseUrl + "/getmission", {
             method: 'POST',
             headers: {
+                "Authorization": global.token,
                 "content-type": "application/json",
             },
-            body: JSON.stringify({
-                "city": query,
-            })
+            body: JSON.stringify({})
         }).then((response) => {
-            console.log(response)
-            setData([{
-                "name": "Appartement Témoin",
-                "city": "Montpellier",
-                "img": "https://edito.seloger.com/sites/default/files/styles/manual_crop_1440x480/public/page_garde_guide/image/location-appartement-guide-seloger.jpg?itok=OtCuI5sf&c=d63190d171fd783906d17365aba288bf",
-                "deal": 200,
-                "objectID": "469443101",
-                "_highlightResult": {
-                    "name": {"value": "Appartement Témoin", "matchLevel": "none", "matchedWords": []},
-                    "city": {
-                        "value": "<em>Montpellier</em>",
-                        "matchLevel": "full",
-                        "fullyHighlighted": true,
-                        "matchedWords": ["montpellier"]
-                    },
-                    "img": {
-                        "value": "https://static.ferienhausmiete.de/pictures/22582/bilder_original/22582_59625499104451.jpg",
-                        "matchLevel": "none",
-                        "matchedWords": []
-                    },
-                    "deal": {"value": "200", "matchLevel": "none", "matchedWords": []}
-                }
-            }, {
-                "name": "Appartement Témoin n°2",
-                "city": "Montpellier",
-                "img": "https://edito.seloger.com/sites/default/files/styles/manual_crop_1440x480/public/page_garde_guide/image/location-appartement-guide-seloger.jpg?itok=OtCuI5sf&c=d63190d171fd783906d17365aba288bf",
-                "deal": 200,
-                "objectID": "750905804",
-                "_highlightResult": {
-                    "name": {
-                        "value": "Appartement Témoin n°2",
-                        "matchLevel": "none",
-                        "matchedWords": []
-                    },
-                    "city": {
-                        "value": "<em>Montpellier</em>",
-                        "matchLevel": "full",
-                        "fullyHighlighted": true,
-                        "matchedWords": ["montpellier"]
-                    },
-                    "img": {
-                        "value": "https://static.ferienhausmiete.de/pictures/22582/bilder_original/22582_59625499104451.jpg",
-                        "matchLevel": "none",
-                        "matchedWords": []
-                    },
-                    "deal": {"value": "200", "matchLevel": "none", "matchedWords": []}
-                }
-            }, {
-                "name": "Appartement Témoin n°3",
-                "city": "Montpellier",
-                "img": "https://edito.seloger.com/sites/default/files/styles/manual_crop_1440x480/public/page_garde_guide/image/location-appartement-guide-seloger.jpg?itok=OtCuI5sf&c=d63190d171fd783906d17365aba288bf",
-                "deal": 200,
-                "objectID": "679072032",
-                "_highlightResult": {
-                    "name": {
-                        "value": "Appartement Témoin n°3",
-                        "matchLevel": "none",
-                        "matchedWords": []
-                    },
-                    "city": {
-                        "value": "<em>Montpellier</em>",
-                        "matchLevel": "full",
-                        "fullyHighlighted": true,
-                        "matchedWords": ["montpellier"]
-                    },
-                    "img": {
-                        "value": "https://static.ferienhausmiete.de/pictures/22582/bilder_original/22582_59625499104451.jpg",
-                        "matchLevel": "none",
-                        "matchedWords": []
-                    },
-                    "deal": {"value": "200", "matchLevel": "none", "matchedWords": []}
-                }
-            }])
+            response.json().then((responseJson) => {
+                setData(responseJson)
+            })
         }).catch((error) => {
             console.error(error);
         });
@@ -123,7 +61,7 @@ export default ({navigation}): React.ReactElement => {
 
     const renderItemHeader = (info): React.ReactElement => (
         <TouchableOpacity onPress={() => {
-            navigation.navigate('Details', {mission: info})
+            navigation.navigate('Details', {mission: info, isNotif: false})
         }}>
             <ImageOverlay
                 style={styles.itemHeader}
@@ -140,6 +78,12 @@ export default ({navigation}): React.ReactElement => {
                     category='s1'
                     status='control'>
                     {`Mission d'une durée de ${info.item.time} j`}
+                </Text>
+                <Text
+                    style={{paddingTop: 50}}
+                    category='s1'
+                    status='control'>
+                    {`${info.item.date}`}
                 </Text>
             </ImageOverlay>
         </TouchableOpacity>
@@ -204,27 +148,38 @@ export default ({navigation}): React.ReactElement => {
         <Layout
             style={[styles.container, {paddingTop: safeArea.top}]}
             level='2'>
+            <NavigationEvents
+                onWillFocus={payload => onEndInput()}
+            />
             <TopNavigation
                 alignment='center'
                 title='Feed'
                 leftControl={renderBackAction()}
                 rightControls={renderMapAction()}
             />
-            <Input
-                style={styles.searchInput}
-                value={query}
-                onChangeText={setQuery}
-                onEndEditing={onEndInput}
-                placeholder='Search'
-                icon={query ? CloseIcon : SearchIcon}
-                onIconPress={onInputIconPress}
-            />
-            <List
-                style={styles.list}
-                contentContainerStyle={styles.listContent}
-                data={data}
-                renderItem={renderItem}
-            />
+            <View style={{flex:1}}>
+                <List
+                    style={styles.list}
+                    contentContainerStyle={styles.listContent}
+                    data={data}
+                    ListHeaderComponent={   <TopNavigation
+                        alignment='center'
+                        title='Mission En Cour'
+                    />}
+                    stickyHeaderIndices={[0]}
+                    renderItem={renderItem}
+                />
+                <TopNavigation
+                    alignment='center'
+                    title='Mission Terminée'
+                />
+                <List
+                    style={styles.list}
+                    contentContainerStyle={styles.listContent}
+                    data={data}
+                    renderItem={renderItem}
+                />
+            </View>
         </Layout>
     );
 };

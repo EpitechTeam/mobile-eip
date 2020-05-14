@@ -12,7 +12,7 @@ import {ApplicationProvider, IconRegistry} from "@ui-kitten/components";
 import {mapping, light as lightTheme} from '@eva-design/eva';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 
-global.BaseUrl = "http://192.168.1.9:9090"
+global.BaseUrl = "https://api.willally.com"
 
 export default function App(props) {
 

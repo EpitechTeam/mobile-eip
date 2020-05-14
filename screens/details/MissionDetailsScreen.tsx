@@ -7,7 +7,7 @@ import {
     ScrollView,
     View,
     TouchableOpacity,
-    StyleSheet,
+    StyleSheet, Alert,
 } from 'react-native';
 import {
     Button,
@@ -26,6 +26,8 @@ import {ClockIcon} from "../dash/extra/icons";
 
 export default ({navigation}): React.ReactElement => {
     let product = navigation.getParam('mission', null)
+    let isNotif = navigation.getParam('isNotif', null)
+
     const safeArea = useSafeArea();
     const [bookmarked, setBookmarked] = React.useState<boolean>(false);
 
@@ -66,9 +68,7 @@ export default ({navigation}): React.ReactElement => {
             marginTop: 8,
         },
         bookButton: {
-            position: 'absolute',
-            bottom: 24,
-            right: 24,
+
         },
         detailsList: {
             flexDirection: 'row',
@@ -110,8 +110,45 @@ export default ({navigation}): React.ReactElement => {
         },
     });
 
-    const onBookButtonPress = (): void => {
-        navigation && navigation.navigate('Payment');
+    const onDecline = (data): void => {
+        fetch(global.BaseUrl + "/editnotification", {
+            method: 'POST',
+            headers: {
+                "Authorization": global.token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "_id": data._id,
+                "decline": true
+            })
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                Alert.alert("Mission Refusée", "Mission refusé !" , [
+                        { text: "OK", onPress: () => navigation.goBack() }
+                    ],
+                    { cancelable: false })
+            }).catch((error) => {
+            console.error(error);
+        });
+    };
+
+    const onBookButtonPress = (item): void => {
+        fetch(global.BaseUrl + "/editnotification", {
+            method: 'POST',
+            headers: {
+                "Authorization": global.token,
+                "Content-Type": "application/json"
+            },
+            body: {
+                "_id": item._id.toString(),
+                "decline": false
+            }
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson)
+            }).catch((error) => {
+            console.error(error);
+        });
     };
 
     const onBookmarkActionPress = (): void => {
@@ -163,6 +200,30 @@ export default ({navigation}): React.ReactElement => {
             {detail}
         </Button>
     );
+
+    const onAccept = (data): void => {
+        console.log(data._id)
+        fetch(global.BaseUrl + "/editnotification", {
+            method: 'POST',
+            headers: {
+                "Authorization": global.token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "_id": data._id,
+                "decline": false
+            })
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson)
+                Alert.alert("Mission Acceptée", "Mission ajouté au mission en cour !", [
+                        { text: "OK", onPress: () => navigation.goBack() }
+                    ],
+                    { cancelable: false })
+            }).catch((error) => {
+            console.error(error);
+        });
+    };
 
     const renderBookingFooter = (): React.ReactElement => (
         <View>
@@ -230,13 +291,29 @@ export default ({navigation}): React.ReactElement => {
                     style={styles.priceLabel}
                     category='h6'>
                     {product.item.deal}€
-                    <Text>{`/3 jours`}</Text>
+                    <Text>{'/' + product.item.date}</Text>
                 </Text>
-                <Button
-                    style={styles.bookButton}
-                    onPress={onBookButtonPress}>
-                    Accepter
-                </Button>
+                {isNotif == false ?
+                    <Button
+                        style={styles.bookButton}
+                        onPress={() => onBookButtonPress(product.item)}>
+                        Terminée
+                    </Button>
+                    :
+                    <View style={{      position: 'absolute',
+                        bottom: 24,
+                        right: 24,}}>
+                        <Button
+                            onPress={() => onAccept(product)}
+                            style={styles.bookButton}>
+                            Accepter
+                        </Button>
+                        <Button
+                            onPress={() => onDecline(product)}
+                            style={styles.bookButton}>
+                            Refuser
+                        </Button>
+                    </View>}
             </Card>
             <Text
                 style={styles.sectionLabel}
@@ -246,7 +323,7 @@ export default ({navigation}): React.ReactElement => {
             <Text
                 style={styles.description}
                 appearance='hint'>
-                {product.description}
+                {product.item.object}
             </Text>
             <Text
                 style={styles.sectionLabel}

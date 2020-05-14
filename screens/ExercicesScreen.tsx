@@ -1,121 +1,124 @@
 import React from 'react';
-import {ExpoConfigView} from '@expo/samples';
-import {Button, FlatList, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {Card, Icon} from "react-native-elements";
-import {Layout, TopNavigation, TopNavigationAction} from "@ui-kitten/components";
-import {ArrowIosBackIcon} from "./dash/extra/icons";
+import {Button, Icon, Layout, List, ListItem, TopNavigation} from '@ui-kitten/components';
+import {Alert, ListRenderItemInfo, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import {useSafeArea} from "./dash/extra/3rd-party";
+import {NavigationActions, NavigationEvents} from "react-navigation";
 
-const renderBackAction = (): React.ReactElement => (
-    <TopNavigationAction
-        icon={ArrowIosBackIcon}
-        onPress={() => {
-        }}
-    />
-);
 
-export default class ExercicesScreen extends React.Component {
+export default ({navigation}): React.ReactElement => {
 
-    static navigationOptions = {
-        header: null
+    const [data, setData] = React.useState(null);
+
+    const onAccept = (index): void => {
+        console.log(data[index]._id)
+        fetch(global.BaseUrl + "/editnotification", {
+            method: 'POST',
+            headers: {
+                "Authorization": global.token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "_id": data[index]._id,
+                "decline": false
+            })
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson)
+                Alert.alert("Mission Acceptée", "Mission ajouté au mission en cour !")
+            }).catch((error) => {
+            console.error(error);
+        });
     };
 
+    const onDecline = (index): void => {
+        fetch(global.BaseUrl + "/editnotification", {
+            method: 'POST',
+            headers: {
+                "Authorization": global.token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "_id": data[index]._id,
+                "decline": true
+            })
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                Alert.alert("Mission Refusée", "Mission refusé !")
+            }).catch((error) => {
+            console.error(error);
+        });
+    };
 
-    render() {
+    const renderItemAccessory = (style, index) => {
         return (
-
-            <Layout
-                style={[styles.container, {paddingTop: StatusBar.currentHeight}]}
-                level='2'>
-                <TopNavigation
-                    alignment='center'
-                    title='Feed'
-                    leftControl={renderBackAction()}
-                />
-                <FlatList
-                    data={[
-                        {key: 'Devin'},
-                        {key: 'Dan'},
-                        {key: 'Dominic'},
-                        {key: 'Jackson'},
-                        {key: 'James'},
-                        {key: 'Joel'},
-                        {key: 'John'},
-                        {key: 'Jillian'},
-                        {key: 'Jimmy'},
-                        {key: 'Julie'},
-                    ]}
-                    renderItem={({item}) => (<TouchableOpacity onPress={() => {
-                    }}>
-                        <Card
-                            title='Jolie petite Chambre près du Canal St Martin'
-                            image={{uri: 'https://www.stockholmpass.com/images_lib/912099625_royalpalace2019_1.jpg'}}>
-                            <Text style={{marginBottom: 10}}>
-                                Chambre dans boutique-hôtel: 2 voyageurs, 1 chambre , 1 lit , 1 salle de bain
-                            </Text>
-                            <Text>Rémunération : 40€</Text>
-                        </Card></TouchableOpacity>)}
-                />
-            </Layout>
+            <View style={{flexDirection: 'row'}}>
+                <Button onPress={() => onAccept(index)} style={style}>Accept</Button>
+                <Button onPress={() => onDecline(index)} style={style}>Decline</Button>
+            </View>
         );
     }
-}
+
+    const renderItemIcon = (style) => (
+        <Icon {...style} name='person'/>
+    );
+
+
+    const renderItem = ({item, index}): React.ReactElement => (
+        <ListItem
+            onPress={() => {
+                let mission = {item: null}
+                mission.item = item.mission_id
+                navigation.navigate('Details', {mission: mission, isNotif: true})
+            }}
+            title={`${item.mission_id.name}`}
+            description={`${item.mission_id.houseOwner}`}
+            icon={renderItemIcon}
+            accessory={(style, index) => renderItemAccessory(style, index)}
+        />
+
+    );
+
+    const onEndInput = (): void => {
+        fetch(global.BaseUrl + "/getnotification", {
+            method: 'POST',
+            headers: {
+                "Authorization": global.token,
+                "content-type": "application/json",
+            },
+            body: JSON.stringify({})
+        }).then((response) => {
+            console.log(response)
+            response.json().then((responseJson) => {
+                setData(responseJson)
+            })
+        }).catch((error) => {
+            console.error(error);
+        });
+    };
+
+    const safeArea = useSafeArea();
+    return (
+        <Layout
+            style={[styles.container, {paddingTop: safeArea.top}]}
+            level='2'>
+            <NavigationEvents
+                onWillFocus={payload => onEndInput()}
+            />
+            <TopNavigation
+                alignment='center'
+                title='Feed'
+            />
+            <List
+                style={styles.container}
+                data={data}
+                renderItem={renderItem}
+            />
+        </Layout>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    list: {
-        flex: 1,
-    },
-    listContent: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-    },
-    item: {
-        marginVertical: 8,
-    },
-    itemHeader: {
-        minHeight: 220,
-        padding: 24,
-    },
-    itemHeaderDetails: {
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    itemStyxContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderRadius: 4,
-        marginHorizontal: -8,
-    },
-    itemStyxText: {
-        marginHorizontal: 16,
-        marginVertical: 14,
-    },
-    itemStyxButton: {
-        paddingHorizontal: 0,
-        paddingVertical: 0,
-        borderRadius: 24,
-    },
-    itemDescription: {
-        marginHorizontal: -8,
-        marginTop: 16,
-    },
-    itemFooter: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    itemReactionsContainer: {
-        flexDirection: 'row',
-    },
-    itemAddButton: {
-        flexDirection: 'row-reverse',
-        paddingHorizontal: 0,
-    },
-    iconButton: {
-        paddingHorizontal: 0,
     },
 });

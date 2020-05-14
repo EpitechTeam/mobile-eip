@@ -37,6 +37,7 @@ DashboardStack.navigationOptions = {
 
 const ExercicesStack = createStackNavigator({
     Exercices: ExercicesScreen,
+    Details: MissionDetailsScreen,
 }, {
     headerMode: "none",
     navigationOptions: {
