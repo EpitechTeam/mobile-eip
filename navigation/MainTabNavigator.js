@@ -7,14 +7,15 @@ import FaIcon from "react-native-vector-icons/FontAwesome";
 
 import TabBarIcon from '../components/TabBarIcon';
 import ProfileScreen from '../screens/profil/ProfileScreen';
-import DashboardScreen from '../screens/dash/DashboardScreen';
+import MissionCurrent from '../screens/dash/MissionCurrent';
 import ExercicesScreen from '../screens/ExercicesScreen';
 import Map from '../components/Map';
 import MissionDetailsScreen from "../screens/details/MissionDetailsScreen";
+import MissionClosed from "../screens/dash/MissionClosed";
 
 
 const DashboardStack = createStackNavigator({
-    Dash: DashboardScreen,
+    Dash: MissionCurrent,
     Details: MissionDetailsScreen,
     Map: Map
 }, {
@@ -56,8 +57,30 @@ ExercicesStack.navigationOptions = {
     ),
 };
 
+const ClosedMissionStack = createStackNavigator({
+    Closed: MissionClosed,
+    Details: MissionDetailsScreen,
+}, {
+    headerMode: "none",
+    navigationOptions: {
+        header: null,
+    },
+});
+
+ClosedMissionStack.navigationOptions = {
+    tabBarLabel: 'Exercises',
+    tabBarIcon: ({tintColor}) => (
+        <McIcon
+            color={tintColor}
+            name={'clipboard-text-outline'}
+            size={30}
+        />
+    ),
+};
+
 export default createMaterialTopTabNavigator({
     DashboardStack,
+    ClosedMissionStack,
     ExercicesStack,
 }, {
     tabBarPosition: 'bottom',

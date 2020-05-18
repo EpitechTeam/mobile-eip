@@ -295,12 +295,14 @@ export default ({navigation}): React.ReactElement => {
                 </Text>
                 {isNotif == false ?
                     <Button
+                        disabled={(product.item.status == 'DONE' || product.item.status == 'CANCELED')}
                         style={styles.bookButton}
                         onPress={() => onBookButtonPress(product.item)}>
                         Terminée
                     </Button>
                     :
-                    <View style={{      position: 'absolute',
+                    <View style={{
+                        position: 'absolute',
                         bottom: 24,
                         right: 24,}}>
                         <Button
