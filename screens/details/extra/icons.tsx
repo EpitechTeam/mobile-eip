@@ -7,7 +7,7 @@ export const ArrowIosBackIcon = (style: ImageStyle): IconElement => (
 );
 
 export const BookmarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='bookmark'/>
+  <Icon {...style} name='question-mark-outline'/>
 );
 
 export const BookmarkOutlineIcon = (style: ImageStyle): IconElement => (

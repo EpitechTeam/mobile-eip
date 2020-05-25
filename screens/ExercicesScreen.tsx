@@ -1,8 +1,17 @@
 import React from 'react';
-import {Button, Icon, Layout, List, ListItem, TopNavigation} from '@ui-kitten/components';
-import {Alert, ListRenderItemInfo, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {Button, Layout, List, ListItem, TopNavigation} from '@ui-kitten/components';
+import {
+    Alert,
+    Image,
+    ListRenderItemInfo,
+    StyleSheet,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from 'react-native';
 import {useSafeArea} from "./dash/extra/3rd-party";
 import {NavigationActions, NavigationEvents} from "react-navigation";
+import {Icon} from "react-native-elements";
 
 
 export default ({navigation}): React.ReactElement => {
@@ -24,7 +33,10 @@ export default ({navigation}): React.ReactElement => {
         }).then((response) => response.json())
             .then((responseJson) => {
                 console.log(responseJson)
-                Alert.alert("Mission Acceptée", "Mission ajouté au mission en cour !")
+                Alert.alert("Mission Acceptée", "Mission ajouté au mission en cour !", [
+                        { text: "OK", onPress: () => this.setState({dummy: 1}) }
+                    ],
+                    { cancelable: false })
             }).catch((error) => {
             console.error(error);
         });
@@ -43,7 +55,10 @@ export default ({navigation}): React.ReactElement => {
             })
         }).then((response) => response.json())
             .then((responseJson) => {
-                Alert.alert("Mission Refusée", "Mission refusé !")
+                Alert.alert("Mission Refusée", "Mission refusé !" , [
+                        { text: "OK", onPress: () => this.setState({dummy: 1}) }
+                    ],
+                    { cancelable: false })
             }).catch((error) => {
             console.error(error);
         });
@@ -58,8 +73,8 @@ export default ({navigation}): React.ReactElement => {
         );
     }
 
-    const renderItemIcon = (style) => (
-        <Icon {...style} name='person'/>
+    const renderItemIcon = (style, index) => (
+        <Icon {...style} name={"notifications-none"} type={"material"}/>
     );
 
 
@@ -70,9 +85,9 @@ export default ({navigation}): React.ReactElement => {
                 mission.item = item.mission_id
                 navigation.navigate('Details', {mission: mission, isNotif: true})
             }}
-            title={`${item.mission_id.name}`}
+                title={`${item.mission_id.house.name}`}
             description={`${item.mission_id.houseOwner}`}
-            icon={renderItemIcon}
+            icon={(style, index)=>renderItemIcon(style, index)}
             accessory={(style, index) => renderItemAccessory(style, index)}
         />
 
@@ -103,10 +118,6 @@ export default ({navigation}): React.ReactElement => {
             level='2'>
             <NavigationEvents
                 onWillFocus={payload => onEndInput()}
-            />
-            <TopNavigation
-                alignment='center'
-                title='Feed'
             />
             <List
                 style={styles.container}

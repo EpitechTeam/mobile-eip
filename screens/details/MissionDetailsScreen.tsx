@@ -124,7 +124,7 @@ export default ({navigation}): React.ReactElement => {
         }).then((response) => response.json())
             .then((responseJson) => {
                 Alert.alert("Mission Refusée", "Mission refusé !" , [
-                        { text: "OK", onPress: () => navigation.goBack() }
+                        { text: "OK", onPress: () => navigation.goBack(null) }
                     ],
                     { cancelable: false })
             }).catch((error) => {
@@ -133,48 +133,43 @@ export default ({navigation}): React.ReactElement => {
     };
 
     const onBookButtonPress = (item): void => {
-        fetch(global.BaseUrl + "/editnotification", {
+        fetch(global.BaseUrl + "/editmission", {
             method: 'POST',
             headers: {
                 "Authorization": global.token,
                 "Content-Type": "application/json"
             },
-            body: {
-                "_id": item._id.toString(),
-                "decline": false
-            }
+            body: JSON.stringify({
+                "_id": item._id,
+                "statusNb": 2
+            })
         }).then((response) => response.json())
             .then((responseJson) => {
-                console.log(responseJson)
+                Alert.alert("Mission Terminée", "Votre mission est maintenant passée en status terminée" , [
+                        { text: "OK", onPress: () => navigation.goBack(null) }
+                    ],
+                    { cancelable: false })
             }).catch((error) => {
             console.error(error);
         });
     };
 
-    const onBookmarkActionPress = (): void => {
-        setBookmarked(!bookmarked);
-    };
 
-    const renderBackAction = (): React.ReactElement => (
+    const renderBookmarkAction = (navigation): React.ReactElement => (
         <TopNavigationAction
-            icon={ArrowIosBackIcon}
-            onPress={navigation.goBack}
+            icon={BookmarkIcon}
+            onPress={()=> navigation.navigate('Help')}
         />
     );
 
-    const renderBookmarkAction = (): React.ReactElement => (
-        <TopNavigationAction
-            icon={bookmarked ? BookmarkIcon : BookmarkOutlineIcon}
-            onPress={onBookmarkActionPress}
-        />
-    );
-
-    const renderImageItem = (info: ListRenderItemInfo<ImageSourcePropType>): React.ReactElement => (
+    const renderImageItem = (item): React.ReactElement => {
+        console.log(item.item.compact_url)
+        return(
         <Image
             style={styles.imageItem}
-            source={info.item}
+            source={{uri:item.item.compact_url}}
         />
-    );
+    );}
 
     const renderOptionItemIcon = (style: ImageStyle, icon: string): React.ReactElement => (
         <Icon {...style} name={icon}/>
@@ -217,7 +212,7 @@ export default ({navigation}): React.ReactElement => {
             .then((responseJson) => {
                 console.log(responseJson)
                 Alert.alert("Mission Acceptée", "Mission ajouté au mission en cour !", [
-                        { text: "OK", onPress: () => navigation.goBack() }
+                        { text: "OK", onPress: () => navigation.goBack(null) }
                     ],
                     { cancelable: false })
             }).catch((error) => {
@@ -233,15 +228,16 @@ export default ({navigation}): React.ReactElement => {
             </Text>
             <View style={styles.detailsList}>
                 {[
-                    '2 Personne',
-                    '1 Lit Double',
-                    '1 Salle De Bain',
-                    '1 Cuisine'
+                    product.item.name
                 ].map(renderDetailItem)}
             </View>
             <Text
                 category='s1'>
                 Localisation
+            </Text>
+            <Text
+                category='s2'>
+                {product.item.house.address1}
             </Text>
             <Layout
                 style={styles.itemStyxContainer}
@@ -268,8 +264,7 @@ export default ({navigation}): React.ReactElement => {
                 source={{uri: product.item.img}}>
                 <TopNavigation
                     appearance='control'
-                    leftControl={renderBackAction()}
-                    rightControls={renderBookmarkAction()}
+                    rightControls={renderBookmarkAction(navigation)}
                 />
             </ImageOverlay>
             <Card
@@ -279,20 +274,35 @@ export default ({navigation}): React.ReactElement => {
                 <Text
                     style={styles.title}
                     category='h6'>
-                    {product.item.name}
+                    {product.item.house.name}
                 </Text>
                 <Text
                     style={styles.rentLabel}
                     appearance='hint'
                     category='p2'>
-                    Rémunération/Durée
+                    Rémunération
                 </Text>
                 <Text
                     style={styles.priceLabel}
                     category='h6'>
                     {product.item.deal}€
-                    <Text>{'/' + product.item.date}</Text>
                 </Text>
+                <Text
+                    style={styles.rentLabel}
+                    appearance='hint'
+                    category='p2'>
+                    Date entrée:
+                </Text>
+                <Text>le {product.item.booking.start_at.split('T')[0]}</Text>
+                <Text>à {product.item.booking.start_at.split('T')[1].split('.')[0].slice(0, -3)} heure</Text>
+                <Text
+                    style={styles.rentLabel}
+                    appearance='hint'
+                    category='p2'>
+                    Date sortie:
+                </Text>
+                <Text>le {product.item.booking.end_at.split('T')[0]}</Text>
+                <Text>à {product.item.booking.end_at.split('T')[1].split('.')[0].slice(0, -3)} heure</Text>
                 {isNotif == false ?
                     <Button
                         disabled={(product.item.status == 'DONE' || product.item.status == 'CANCELED')}
@@ -336,11 +346,7 @@ export default ({navigation}): React.ReactElement => {
                 contentContainerStyle={styles.imagesList}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
-                data={[
-                    require('./assets/image-product.jpg'),
-                    require('./assets/image-product.jpg'),
-                    require('./assets/image-product.jpg'),
-                ]}
+                data={product.item.house.photos}
                 renderItem={renderImageItem}
             />
         </ScrollView>

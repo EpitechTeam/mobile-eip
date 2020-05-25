@@ -32,7 +32,22 @@ export default class ProfileScreen extends React.Component<any, any> {
             .then((responseJson) => {
                 console.log(responseJson)
                 this.setState(previousState => (
-                    {profile: responseJson}
+                    {profile: responseJson, previousState}
+                ))
+                return;
+            }).catch((error) => {
+            console.error(error);
+        });
+        fetch(global.BaseUrl + "/getstats", {
+            method: 'POST',
+            headers: {
+                "Authorization": "Bearer " + global.token,
+            },
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson)
+                this.setState(previousState => (
+                    {stats: responseJson, previousState}
                 ))
                 return;
             }).catch((error) => {
@@ -53,7 +68,7 @@ export default class ProfileScreen extends React.Component<any, any> {
 
         return (
             <Layout
-                style={[styles.container, {paddingTop: 10}]}
+                style={[styles.container, {paddingTop: 30}]}
                 level='2'>
                 <NavigationEvents
                     onWillFocus={payload => this.componentWillMount()}
@@ -142,6 +157,9 @@ export default class ProfileScreen extends React.Component<any, any> {
                     <View style={styles.detailsList}>
                         {this.state.profile.skills ? this.state.profile.skills.map((item, i) => this.renderDetailItem(item, i)) : this.state.profile.skills}
                     </View>
+                    <View>
+                        {this.state.stats ? this.state.stats.data.map((item, i) => this.renderDetail(item, i)) : this.state.stats}
+                    </View>
                 </ScrollView>
             </Layout>
         );
@@ -156,6 +174,15 @@ export default class ProfileScreen extends React.Component<any, any> {
                 size='tiny'>
                 {detail}
             </Button>)
+    }
+
+    private renderDetail(detail: string, index: number) {
+        if (index < 11)
+        return (
+            <View>
+                <Text   style={styles.profileDescription}>{this.state.stats.labels[index]}: {this.state.stats.data[index]}€</Text>
+            </View>
+                )
     }
 
     private renderBilanItem() {

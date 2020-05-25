@@ -89,7 +89,7 @@ export default ({navigation}): React.ReactElement => {
     const renderBackAction = (): React.ReactElement => (
         <TopNavigationAction
             icon={ArrowIosBackIcon}
-            onPress={navigation && navigation.goBack}
+            onPress={navigation && navigation.goBack(null)}
         />
     );
 

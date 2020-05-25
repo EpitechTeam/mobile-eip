@@ -44,11 +44,13 @@ export default ({navigation}): React.ReactElement => {
                     _storeData = async () => {
                         try {
                             await AsyncStorage.setItem('token', responseJson.token);
+                            await AsyncStorage.setItem('_id', responseJson.user._id);
                         } catch (error) {
                             // Error saving data
                         }
                     };
                     _storeData()
+                    global._id = responseJson.user._id
                     global.token = responseJson.token
                     navigation.navigate('Main')
                 })
@@ -77,9 +79,11 @@ export default ({navigation}): React.ReactElement => {
                     _retrieveToken = async () => {
                         try {
                             const value = await AsyncStorage.getItem('token');
+                            const value_id = await AsyncStorage.getItem('_id');
                             console.log(value);
                             if (value !== null) {
                                 global.token = value
+                                global._id = value_id
                                 navigation.navigate('Main')
                             }
                         } catch (error) {

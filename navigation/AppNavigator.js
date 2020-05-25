@@ -8,6 +8,7 @@ import ProfileScreen from "../screens/profil/ProfileScreen";
 import Icon from 'react-native-vector-icons/Feather';
 import RegisterScreen from "../screens/sign-up/RegisterScreen.tsx";
 import ProfileSettings from "../screens/profile-settings/ProfileSettings";
+import Help from "../screens/Help";
 
 
 const Stack = createStackNavigator({
@@ -19,6 +20,7 @@ const Stack = createStackNavigator({
         },
     },
     Profil: ProfileScreen,
+    Help : Help,
     ProfileSettings: ProfileSettings
 }, { headerMode: "none",
     navigationOptions: {

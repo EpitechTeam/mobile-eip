@@ -11,7 +11,7 @@ export const ClockIcon = (style: ImageStyle): IconElement => (
 );
 
 export const HeartIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='navigation-2-outline'/>
+  <Icon {...style} name='close-outline'/>
 );
 
 

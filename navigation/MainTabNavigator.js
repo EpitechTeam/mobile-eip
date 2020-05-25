@@ -1,5 +1,5 @@
 import React from 'react';
-import {Platform} from 'react-native';
+import {AsyncStorage, Platform, SafeAreaView, StatusBar} from 'react-native';
 import {createStackNavigator, createMaterialTopTabNavigator} from 'react-navigation';
 import MaIcon from "react-native-vector-icons/MaterialIcons";
 import McIcon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -12,12 +12,16 @@ import ExercicesScreen from '../screens/ExercicesScreen';
 import Map from '../components/Map';
 import MissionDetailsScreen from "../screens/details/MissionDetailsScreen";
 import MissionClosed from "../screens/dash/MissionClosed";
+import {Layout, TopNavigation, TopNavigationAction} from "@ui-kitten/components";
+import {ArrowIosBackIcon, HeartIcon} from "../screens/dash/extra/icons";
+import {useSafeArea} from "react-native-safe-area-context";
+import {Icon} from "react-native-elements";
+import Help from "../screens/Help";
 
 
 const DashboardStack = createStackNavigator({
     Dash: MissionCurrent,
     Details: MissionDetailsScreen,
-    Map: Map
 }, {
     headerMode: "none",
     navigationOptions: {
@@ -26,7 +30,7 @@ const DashboardStack = createStackNavigator({
 });
 
 DashboardStack.navigationOptions = {
-    tabBarLabel: 'Dashboard',
+    tabBarLabel: 'Mission En Cour',
     tabBarIcon: ({tintColor}) => (
         <McIcon
             color={tintColor}
@@ -47,11 +51,12 @@ const ExercicesStack = createStackNavigator({
 });
 
 ExercicesStack.navigationOptions = {
-    tabBarLabel: 'Exercises',
+    tabBarLabel: 'Notification',
     tabBarIcon: ({tintColor}) => (
-        <McIcon
+        <Icon
             color={tintColor}
-            name={'clipboard-text-outline'}
+            type='material'
+            name={'notifications-active'}
             size={30}
         />
     ),
@@ -68,17 +73,19 @@ const ClosedMissionStack = createStackNavigator({
 });
 
 ClosedMissionStack.navigationOptions = {
-    tabBarLabel: 'Exercises',
+    tabBarLabel: 'Mission Terminée',
     tabBarIcon: ({tintColor}) => (
-        <McIcon
+        <Icon
             color={tintColor}
-            name={'clipboard-text-outline'}
+            type='material'
+            name={'done-all'}
             size={30}
         />
     ),
 };
 
-export default createMaterialTopTabNavigator({
+
+const primaryTab = createMaterialTopTabNavigator({
     DashboardStack,
     ClosedMissionStack,
     ExercicesStack,
@@ -92,7 +99,7 @@ export default createMaterialTopTabNavigator({
             borderTopColor: 'black',
         },
         showIcon: true,
-        showLabel: false,
+        showLabel: true,
         activeTintColor: '#58A4B0',
         indicatorStyle: {
             backgroundColor: '#58A4B0',
@@ -102,5 +109,41 @@ export default createMaterialTopTabNavigator({
     headerMode: "none",
     navigationOptions: {
         header: null,
+    },
+});
+
+const renderBackAction = (navigation) => (
+    <TopNavigationAction
+        icon={ArrowIosBackIcon}
+        onPress={() => {
+            navigation.navigate('Profil')
+        }}
+    />
+);
+
+const renderMapAction = (navigation) => (
+    <TopNavigationAction
+        icon={HeartIcon}
+        onPress={() => {
+            AsyncStorage.removeItem("token").then(()=>{navigation.popToTop();
+                navigation.goBack(null);})
+        }}
+    />
+);
+
+export default createStackNavigator ({
+    NestedHeader: {
+        screen: primaryTab,
+        navigationOptions: ({navigation}) => ({
+            header:
+            <SafeAreaView style={{paddingTop:30}}>
+                <TopNavigation
+                alignment='center'
+                title='Willally'
+                leftControl={renderBackAction(navigation)}
+                rightControls={renderMapAction(navigation)}
+            />
+            </SafeAreaView>
+        }),
     },
 });

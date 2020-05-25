@@ -30,7 +30,7 @@ export default ({navigation}): React.ReactElement => {
                 "Authorization": global.token,
                 "content-type": "application/json",
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({_id:global._id})
         }).then((response) => {
             response.json().then((responseJson) => {
                 let filteredItems = responseJson.filter(function (item) {
@@ -73,14 +73,14 @@ export default ({navigation}): React.ReactElement => {
                     <Text
                         category='h4'
                         status='control'>
-                        {`${info.item.name}`}
+                        {`${info.item.house.name}`}
                     </Text>
                 </View>
                 <Text
                     style={{paddingTop: 50}}
                     category='s1'
                     status='control'>
-                    {`Mission d'une durée de ${info.item.time} j`}
+                    {`Mission d'une durée de ${info.item.object} j`}
                 </Text>
                 <Text
                     style={{paddingTop: 50}}
@@ -109,9 +109,8 @@ export default ({navigation}): React.ReactElement => {
 
     const product: Product = Product.centralParkApartment();
 
-    const renderDetailItem = (detail: string, index: number): React.ReactElement => (
+    const renderDetailItem = (detail: string): React.ReactElement => (
         <Button
-            key={index}
             style={styles.detailItem}
             appearance='outline'
             size='tiny'>
@@ -142,7 +141,7 @@ export default ({navigation}): React.ReactElement => {
                 </Button>
             </Layout>
             <View style={styles.detailsList}>
-                {product.details.map(renderDetailItem)}
+                {renderDetailItem(info.item.name)}
             </View>
         </Card>
     );
@@ -153,12 +152,6 @@ export default ({navigation}): React.ReactElement => {
             level='2'>
             <NavigationEvents
                 onWillFocus={payload => onEndInput()}
-            />
-            <TopNavigation
-                alignment='center'
-                title='Feed'
-                leftControl={renderBackAction()}
-                rightControls={renderMapAction()}
             />
             <List
                 style={styles.list}

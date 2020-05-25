@@ -2,7 +2,7 @@ import {AppLoading} from 'expo';
 import {Asset} from 'expo-asset';
 import * as Font from 'expo-font';
 import React, {useState} from 'react';
-import {Platform, StatusBar, StyleSheet, View} from 'react-native';
+import {Platform, SafeAreaView, StatusBar, StyleSheet, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 
 
@@ -10,9 +10,11 @@ import AppNavigator from './navigation/AppNavigator';
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import {ApplicationProvider, IconRegistry} from "@ui-kitten/components";
 import {mapping, light as lightTheme} from '@eva-design/eva';
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import {EvaIconsPack} from '@ui-kitten/eva-icons';
 
 global.BaseUrl = "https://api.willally.com"
+global.token = ""
+global._id = ""
 
 export default function App(props) {
 
@@ -33,7 +35,9 @@ export default function App(props) {
                 <ApplicationProvider mapping={mapping} theme={lightTheme}>
                     <SafeAreaProvider>
                         {Platform.OS === 'ios' && <StatusBar barStyle="default"/>}
-                        <AppNavigator/>
+                        <SafeAreaView style={{flex:1}}>
+                            <AppNavigator/>
+                        </SafeAreaView>
                     </SafeAreaProvider>
                 </ApplicationProvider>
             </React.Fragment>
