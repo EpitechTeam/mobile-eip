@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Mobile-Eip",
-    "slug": "Mobile-Eip",
+    "name": "Willally",
+    "slug": "Willally",
     "privacy": "public",
     "sdkVersion": "35.0.0",
     "platforms": [
@@ -24,10 +24,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.willally.app"
     },
      "android": {
-      "package": "com.eip.app",
+      "package": "com.willally.app",
     }
   }
 }
